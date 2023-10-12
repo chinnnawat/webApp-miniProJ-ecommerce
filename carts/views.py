@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from store.models import Product
+from store.models import Product,Variation
 from .models import Cart, CartItem
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
@@ -16,6 +16,17 @@ def _cart_id(request):
     return cart
 
 def add_cart(request, product_id):
+    if request.method == 'POST':
+        for item in request.POST:
+            key = item
+            value = request.POST[key]
+
+            try:
+                variation = Variation.objects.get(variation_category_iexact=key, variation_value_iexact=value)
+                print(variation)
+            except:
+                pass
+
     product = Product.objects.get(id=product_id) #get the product
     try:
         cart = Cart.objects.get(cart_id=_cart_id(request)) # get the cart using the cart_id present in the session
